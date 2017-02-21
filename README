@@ -55,11 +55,11 @@ To build without MMX code enabled (i.e. ARM, PPC, AMD64 architectures):
         make install
 \endverbatim
 
-\subsection visualstudio Windows (VS2012, VS2013)
+\subsection visualstudio Windows (VS2015)
 
 Open the SDL2_gfx.sln solution file, right click on the solution and choose 'Rebuild'.
 
-The SDL2 Visual Studio solution must be placed in a directory alongside SDL2_gfx and build in the same configuration, i.e. Debug or Release, beforehand so the referenced SDL2.lib file can be found.
+The SDL2-2.0.5 folder must be placed in a directory alongside SDL2_gfx (or sdl2gfx-code) and build in the same configuration, i.e. Debug or Release, beforehand so the referenced SDL2.lib file can be found.
 
 \subsection platformosx Mac OSX 
 

@@ -567,7 +567,7 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	* Special case - no rounding
 	*/
 	if (rad <= 1) {
-		return rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a);
+		return boxRGBA(renderer, x1, y1, x2, y2, r, g, b, a);
 	}
 
 	/*

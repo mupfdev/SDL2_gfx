@@ -1,5 +1,12 @@
 SDL2_gfx ChangeLog
 
+Mon, Feb 20, 2017  9:04:29 PM
+- version rev to 1.0.3
+- updates to VS solution
+- update README for VS2015
+- fix to rotozoomSurfaceSizeTrig (thanks hydren)
+- fix for special case of roundedBoxRGBA (thanks LukeMS)
+
 Thu, Dec 10, 2015  8:11:26 AM
 - added XCode.zip (thanks Matthias for contributing)
 

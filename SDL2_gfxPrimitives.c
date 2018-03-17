@@ -949,7 +949,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 			return (hlineRGBA(renderer, x1, x2, y1, r, g, b, a));
 		} else {
 			if (dx > 0) {
-				return (hlineRGBA(renderer, xx0, xx0+dx, y1, r, g, b, a));
+				return (hlineRGBA(renderer, xx0, xx0+(xdir*dx), y1, r, g, b, a));
 			} else {
 				return (pixelRGBA(renderer, x1, y1, r, g, b, a));
 			}
@@ -1526,15 +1526,17 @@ int _drawQuadrants(SDL_Renderer * renderer,  Sint16 x, Sint16 y, Sint16 dx, Sint
 
 \returns Returns 0 on success, -1 on failure.
 */
-#define ELLIPSE_OVERSCAN	4
+#define DEFAULT_ELLIPSE_OVERSCAN	4
 int _ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint32 f)
 {
 	int result;
+	Sint32 rxi, ryi;
 	Sint32 rx2, ry2, rx22, ry22; 
     Sint32 error;
     Sint32 curX, curY, curXp1, curYm1;
 	Sint32 scrX, scrY, oldX, oldY;
     Sint32 deltaX, deltaY;
+	Sint32 ellipseOverscan;
 
 	/*
 	* Sanity check radii 
@@ -1564,28 +1566,46 @@ int _ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 
 			return (hline(renderer, x - rx, x + rx, y));
 		}
 	}
+	
+	/*
+ 	 * Adjust overscan 
+	 */
+	rxi = rx;
+	ryi = ry;
+	if (rxi >= 512 || ryi >= 512)
+	{
+		ellipseOverscan = DEFAULT_ELLIPSE_OVERSCAN / 4;
+	} 
+	else if (rxi >= 256 || ryi >= 256)
+	{
+		ellipseOverscan = DEFAULT_ELLIPSE_OVERSCAN / 2;
+	}
+	else
+	{
+		ellipseOverscan = DEFAULT_ELLIPSE_OVERSCAN / 1;
+	}
 
 	/*
 	 * Top/bottom center points.
 	 */
 	oldX = scrX = 0;
-	oldY = scrY = ry;
+	oldY = scrY = ryi;
 	result |= _drawQuadrants(renderer, x, y, 0, ry, f);
 
 	/* Midpoint ellipse algorithm with overdraw */
-	rx *= ELLIPSE_OVERSCAN;
-	ry *= ELLIPSE_OVERSCAN;
-	rx2 = rx * rx;
+	rxi *= ellipseOverscan;
+	ryi *= ellipseOverscan;
+	rx2 = rxi * rxi;
 	rx22 = rx2 + rx2;
-    ry2 = ry * ry;
+    ry2 = ryi * ryi;
 	ry22 = ry2 + ry2;
     curX = 0;
-    curY = ry;
+    curY = ryi;
     deltaX = 0;
     deltaY = rx22 * curY;
  
 	/* Points in segment 1 */ 
-    error = ry2 - rx2 * ry + rx2 / 4;
+    error = ry2 - rx2 * ryi + rx2 / 4;
     while (deltaX <= deltaY)
     {
           curX++;
@@ -1599,8 +1619,8 @@ int _ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 
                error -= deltaY;
           }
 
-		  scrX = curX/ELLIPSE_OVERSCAN;
-		  scrY = curY/ELLIPSE_OVERSCAN;
+		  scrX = curX / ellipseOverscan;
+		  scrY = curY / ellipseOverscan;
 		  if ((scrX != oldX && scrY == oldY) || (scrX != oldX && scrY != oldY)) {
 			result |= _drawQuadrants(renderer, x, y, scrX, scrY, f);
 			oldX = scrX;
@@ -1629,8 +1649,8 @@ int _ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 
                error += deltaX;
 			}
 
-		    scrX = curX/ELLIPSE_OVERSCAN;
-		    scrY = curY/ELLIPSE_OVERSCAN;
+		    scrX = curX / ellipseOverscan;
+		    scrY = curY / ellipseOverscan;
 		    if ((scrX != oldX && scrY == oldY) || (scrX != oldX && scrY != oldY)) {
 				oldY--;
 				for (;oldY >= scrY; oldY--) {

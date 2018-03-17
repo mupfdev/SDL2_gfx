@@ -155,6 +155,7 @@ void ClearScreen(SDL_Renderer *renderer, const char *title)
 	int x,y;
 	float stepx, stepy, fx, fy, fxy;
 	char titletext[TLEN+1];
+	Sint16 textlength;
 
 	/* Clear the screen */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -183,15 +184,20 @@ void ClearScreen(SDL_Renderer *renderer, const char *title)
 	SDL_strlcpy(titletext,"Current Primitive: ",TLEN);
 	SDL_strlcat(titletext,title,TLEN);
 	SDL_strlcat(titletext,"  -  Space to continue. ESC to Quit.",TLEN);
-	stringRGBA (renderer, WIDTH/2-4*strlen(titletext),10-4,titletext,255,255,0,255);
+	textlength = (Sint16)strlen(titletext);
+	stringRGBA (renderer, WIDTH/2-4*textlength,10-4,titletext,255,255,0,255);
 	SDL_strlcpy(titletext,"A=255 on Black",TLEN);
-	stringRGBA (renderer, WIDTH/4-4*strlen(titletext),50-4,titletext,255,255,255,255);
+	textlength = (Sint16)strlen(titletext);
+	stringRGBA (renderer, WIDTH/4-4*textlength,50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=0-254 on Black",TLEN);
-	stringRGBA (renderer, 3*WIDTH/4-4*strlen(titletext),50-4,titletext,255,255,255,255);
+	textlength = (Sint16)strlen(titletext);
+	stringRGBA (renderer, 3*WIDTH/4-4*textlength,50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=255, Color Test",TLEN);
-	stringRGBA (renderer, WIDTH/4-4*strlen(titletext),(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
+	textlength = (Sint16)strlen(titletext);
+	stringRGBA (renderer, WIDTH/4-4*textlength,(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=0-254 on Color",TLEN);
-	stringRGBA (renderer, 3*WIDTH/4-4*strlen(titletext),(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
+	textlength = (Sint16)strlen(titletext);
+	stringRGBA (renderer, 3*WIDTH/4-4*textlength,(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
 }
 
 /* Clear a center box for accuracy testing */
@@ -199,6 +205,8 @@ void ClearCenter(SDL_Renderer *renderer, const char *title)
 {
 	SDL_Rect r;
 	int i, j;
+	Sint16 textlength;
+
 	r.x = WIDTH/2 - 60;
 	r.y = HEIGHT/2 - 30;
 	r.w = 2 * 60;
@@ -214,7 +222,8 @@ void ClearCenter(SDL_Renderer *renderer, const char *title)
 		  SDL_RenderDrawPoint(renderer, WIDTH/2 + i, HEIGHT/2 + j);
 	  }
 	}
-	stringRGBA (renderer, WIDTH/2 - 4*strlen(title),r.y + 2,title,255,255,255,255);
+	textlength = (Sint16)strlen(title);
+	stringRGBA (renderer, WIDTH/2 - 4*textlength,r.y + 2,title,255,255,255,255);
 }
 
 /* !< Function pointer to a primitives test function */
@@ -224,6 +233,8 @@ void ExecuteTest(SDL_Renderer *renderer, PrimitivesTestCaseFp testCase, int test
 {
 	char titletext[TLEN+1];
     Uint32 then, now, numPrimitives;
+	Sint16 textlength;
+
 	ClearScreen(renderer, testName);
 	then = SDL_GetTicks();
 	numPrimitives = testCase(renderer);
@@ -231,7 +242,8 @@ void ExecuteTest(SDL_Renderer *renderer, PrimitivesTestCaseFp testCase, int test
     if (now > then) {
         double fps = ((double) numPrimitives * 1000) / (now - then);
         SDL_snprintf(titletext, TLEN, "Test %2i %20s: %10.1f /sec", testNum, testName, fps);
-	    stringRGBA (renderer, WIDTH/2-4*strlen(titletext),30-4,titletext,255,255,255,255);
+		textlength = (Sint16)strlen(titletext);
+	    stringRGBA (renderer, WIDTH/2-4*textlength,30-4,titletext,255,255,255,255);
 		SDL_Log(titletext);
     }
 }
@@ -614,6 +626,56 @@ int TestLine(SDL_Renderer *renderer)
 	return (4 * NUM_RANDOM) / step;
 }
 
+int TestAALine(SDL_Renderer *renderer)
+{
+	int i;
+	char r, g, b;
+	int step = 4;
+
+	/* Draw A=255 */
+	SetViewport(renderer, 0, 60, WIDTH / 2, 60 + (HEIGHT - 80) / 2);
+	for (i = 0; i<NUM_RANDOM; i += step) {
+		aalineRGBA(renderer, rx[i], ry[i], rx[i + 1], ry[i + 1], rr[i], rg[i], rb[i], 255);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer, WIDTH / 2, 60, WIDTH, 60 + (HEIGHT - 80) / 2);
+	for (i = 0; i<NUM_RANDOM; i += step) {
+		aalineRGBA(renderer, rx[i], ry[i], rx[i + 1], ry[i + 1], rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer, WIDTH / 2, 80 + (HEIGHT - 80) / 2, WIDTH, HEIGHT);
+	for (i = 0; i<NUM_RANDOM; i += step) {
+		aalineRGBA(renderer, rx[i], ry[i], rx[i + 1], ry[i + 1], rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw Colortest */
+	SetViewport(renderer, 0, 80 + (HEIGHT - 80) / 2, WIDTH / 2, HEIGHT);
+	for (i = 0; i<NUM_RANDOM; i += step) {
+		if (rx[i] < (WIDTH / 6)) {
+			r = 255; g = 0; b = 0;
+		}
+		else if (rx[i] < (WIDTH / 3)) {
+			r = 0; g = 255; b = 0;
+		}
+		else {
+			r = 0; g = 0; b = 255;
+		}
+		aalineRGBA(renderer, rx[i], ry[i], rx[i] + rr1[i], ry[i] + rr2[i], r, g, b, 255);
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+
+	/* Accuracy test */
+	ClearCenter(renderer, "14px a45 aaline");
+	aalineRGBA(renderer, WIDTH / 2, HEIGHT / 2, WIDTH / 2 + 10, HEIGHT / 2 + 10, 255, 255, 255, 255);
+
+	return (4 * NUM_RANDOM) / step;
+}
+
+
 int TestCircle(SDL_Renderer *renderer)
 {
 	int i;
@@ -665,7 +727,7 @@ int TestAACircle(SDL_Renderer *renderer)
 {
 	int i;
 	char r,g,b;
-	int step = 2;
+	int step = 4;
 
 	/* Draw A=255 */
 	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
@@ -806,7 +868,7 @@ int TestAAEllipse(SDL_Renderer *renderer)
 {
 	int i;
 	char r,g,b;
-	int step = 2;
+	int step = 4;
 
 	/* Draw A=255 */
 	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
@@ -1491,6 +1553,156 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 	return (4 * NUM_RANDOM) / step;
 }
 
+int TestBigCircle(SDL_Renderer *renderer)
+{
+	int i, j, k;
+	Uint8 r, g, b, a;
+	int ad;
+	int count = 0;
+
+	for (i = 0; i < 4; i++)
+	{
+		switch (i)
+		{
+			case 0:
+				SetViewport(renderer, 0, 60, WIDTH / 2, 60 + (HEIGHT - 80) / 2);
+				ad = 0;
+				break;
+			case 1:
+				SetViewport(renderer, WIDTH / 2, 60, WIDTH, 60 + (HEIGHT - 80) / 2);
+				ad = 1;
+				break;
+			case 2:
+				SetViewport(renderer, WIDTH / 2, 80 + (HEIGHT - 80) / 2, WIDTH, HEIGHT);
+				ad = 0;
+				break;
+			case 3:
+				SetViewport(renderer, 0, 80 + (HEIGHT - 80) / 2, WIDTH / 2, HEIGHT);
+				ad = 1;
+				break;
+		}
+
+		/* Various radii around 255 and 511 */
+		for (k = 1; k <= 2; k++)
+		{
+			a = 255;
+			for (j = -32; j <= 32; j++)
+			{
+				switch (j & 3)
+				{
+					case 0:
+						r = 255; g = 0; b = 0;
+						break;
+					case 1:
+						r = 0; g = 255; b = 0;
+						break;
+					case 2:
+						r = 0; g = 0; b = 255;
+						break;
+				}
+
+				circleRGBA(renderer,
+					WIDTH / 2,
+					HEIGHT / (2 - k + 1),
+					(Sint16)(256 * k - 1 + 2 * j),
+					r,
+					g,
+					b,
+					a);
+
+				a = a - 2 * ad;
+				count++;
+			}
+		}
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+
+	return count;
+}
+
+
+int TestBigEllipse(SDL_Renderer *renderer)
+{
+	int i, j, k;
+	Uint8 r, g, b, a;
+	Uint8 ad;
+	int count = 0;
+
+	for (i = 0; i < 4; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			SetViewport(renderer, 0, 60, WIDTH / 2, 60 + (HEIGHT - 80) / 2);
+			ad = 0;
+			break;
+		case 1:
+			SetViewport(renderer, WIDTH / 2, 60, WIDTH, 60 + (HEIGHT - 80) / 2);
+			ad = 1;
+			break;
+		case 2:
+			SetViewport(renderer, WIDTH / 2, 80 + (HEIGHT - 80) / 2, WIDTH, HEIGHT);
+			ad = 0;
+			break;
+		case 3:
+			SetViewport(renderer, 0, 80 + (HEIGHT - 80) / 2, WIDTH / 2, HEIGHT);
+			ad = 1;
+			break;
+		}
+
+		/* Various radii around 255 and 511 */
+		for (k = 1; k <= 2; k++)
+		{
+			a = 255;
+			for (j = -32; j <= 32; j++)
+			{
+				switch (j & 3)
+				{
+					case 0:
+						r = 255; g = 0; b = 0;
+						break;
+					case 1:
+						r = 0; g = 255; b = 0;
+						break;
+					case 2:
+						r = 0; g = 0; b = 255;
+						break;
+				}
+
+				ellipseRGBA(renderer,
+					WIDTH / 2,
+					HEIGHT / 2,
+					(Sint16)(256 * k - 1 + 2 * j),
+					(Sint16)(256 * k - 1 - 2 * j),
+					r,
+					g,
+					b,
+					a);
+
+				ellipseRGBA(renderer,
+					WIDTH / 2,
+					HEIGHT / 2,
+					(Sint16)(256 * k - 1 - 2 * j),
+					(Sint16)(256 * k - 1 + 2 * j),
+					r,
+					g,
+					b,
+					a);
+
+				a = a - 2 * ad;
+				count += 2;
+			}
+		}
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+
+	return count;
+}
+
 /* ====== Main */
 
 int main(int argc, char *argv[])
@@ -1590,11 +1802,11 @@ int main(int argc, char *argv[])
 
 		if (!drawn) {
 			/* Set test range */
-			numTests = 24;
+			numTests = 28;
 			if (test < 0) { 
 				test = (numTests - 1); 
 			} else {
-				test = test % (numTests + 1);
+				test = test % numTests;
 			}
 
 			/* Create random points */
@@ -1634,77 +1846,89 @@ int main(int argc, char *argv[])
 						break;
 					}
 					case 7: {
-						ExecuteTest(renderer, TestCircle, test, "Circle");
+						ExecuteTest(renderer, TestAALine, test, "AALine");
 						break;
 					}
 					case 8: {
-						ExecuteTest(renderer, TestAACircle, test, "AACircle");
+						ExecuteTest(renderer, TestCircle, test, "Circle");
 						break;
 					}
 					case 9: {
-						ExecuteTest(renderer, TestFilledCircle, test, "FilledCircle");
+						ExecuteTest(renderer, TestAACircle, test, "AACircle");
 						break;
 					}
 					case 10: {
-						ExecuteTest(renderer, TestEllipse, test, "Ellipse");
+						ExecuteTest(renderer, TestFilledCircle, test, "FilledCircle");
 						break;
 					}
 					case 11: {
-						ExecuteTest(renderer, TestAAEllipse, test, "AAEllipse");
+						ExecuteTest(renderer, TestEllipse, test, "Ellipse");
 						break;
 					}
 					case 12: {
-						ExecuteTest(renderer, TestFilledEllipse, test, "FilledEllipse");
+						ExecuteTest(renderer, TestAAEllipse, test, "AAEllipse");
 						break;
 					}
 					case 13: {
-						ExecuteTest(renderer, TestBezier, test, "Bezier");
+						ExecuteTest(renderer, TestFilledEllipse, test, "FilledEllipse");
 						break;
 					}
 					case 14: {
-						ExecuteTest(renderer, TestPolygon, test, "Polygon");
+						ExecuteTest(renderer, TestBezier, test, "Bezier");
 						break;
 					}
 					case 15: {
-						ExecuteTest(renderer, TestAAPolygon, test, "AAPolygon");
+						ExecuteTest(renderer, TestPolygon, test, "Polygon");
 						break;
 					}
 					case 16: {
-						ExecuteTest(renderer, TestFilledPolygon, test, "FilledPolygon");
+						ExecuteTest(renderer, TestAAPolygon, test, "AAPolygon");
 						break;
 					}
 					case 17: {
-						ExecuteTest(renderer, TestTrigon, test, "Trigon");
+						ExecuteTest(renderer, TestFilledPolygon, test, "FilledPolygon");
 						break;
 					}
 					case 18: {
-						ExecuteTest(renderer, TestArc, test, "Arc");
+						ExecuteTest(renderer, TestTrigon, test, "Trigon");
 						break;
 					}
 					case 19: {
-						ExecuteTest(renderer, TestPie, test, "Pie");
+						ExecuteTest(renderer, TestArc, test, "Arc");
 						break;
 					}
 					case 20: {
-						ExecuteTest(renderer, TestFilledPie, test, "FilledPie");
+						ExecuteTest(renderer, TestPie, test, "Pie");
 						break;
 					}
 					case 21: {
-						ExecuteTest(renderer, TestThickLine, test, "ThickLine");
+						ExecuteTest(renderer, TestFilledPie, test, "FilledPie");
 						break;
 					}
 					case 22: {
-						ExecuteTest(renderer, TestTexturedPolygon, test, "TexturedPolygon");
+						ExecuteTest(renderer, TestThickLine, test, "ThickLine");
 						break;
 					}
 					case 23: {
+						ExecuteTest(renderer, TestTexturedPolygon, test, "TexturedPolygon");
+						break;
+					}
+					case 24: {
 						ExecuteTest(renderer, TestRoundedBox, test, "RoundedBox");
 						break;
 					}					
-					case 24: {
+					case 25: {
 						ExecuteTest(renderer, TestThickLineAccuracy, test, "ThickLine (Accuracy)");
 						break;
-					}					
+					}		
+					case 26: {
+						ExecuteTest(renderer, TestBigCircle, test, "Circle (Big)");
+						break;
+					}
+					case 27: {
+						ExecuteTest(renderer, TestBigEllipse, test, "Ellipse (Big)");
+						break;
+					}
 					default: {
 						ClearScreen(renderer, "Unknown Test");
 						break;

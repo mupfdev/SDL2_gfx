@@ -914,7 +914,7 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 		{
 			for (row = 0; row < src->h; ++row) {
 				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
-				dstBuf = (Uint8*)(dst->pixels) + (row * bpp) + (dst->h * dst->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + (row * bpp) + ((dst->h - 1) * dst->pitch);
 				for (col = 0; col < src->w; ++col) {
 					memcpy (dstBuf, srcBuf, bpp);
 					srcBuf += bpp;

@@ -1,0 +1,20 @@
+Key Creation
+------------
+Reference: https://www.cyberciti.biz/tips/linux-how-to-create-our-own-gnupg-privatepublic-key.html
+gpg --gen-key
+
+Tarball Signing
+---------------
+Reference: http://schwer.us/nblug/gpg/#gnupg
+gpg --detach-sign --armor SDL2_gfx-1.0.4.tar.gz
+
+Public Key Export
+-----------------
+Reference: http://schwer.us/nblug/gpg/#gnupg
+gpg --export --armor aschiffler@ferzkopp.net > aschiffler.asc 
+
+Tarball Verification
+--------------------
+Reference: https://www.cyberciti.biz/tips/howto-verify-integrity-of-the-tar-balls-with-gpg-command.html
+gpg SDL2_gfx-1.0.4.tar.gz.asc
+

@@ -1,5 +1,11 @@
 SDL2_gfx ChangeLog
 
+Sun, Feb 11, 2018  16:55:00 PM
+- version rev to 1.0.4
+- fix int overflow in ellipseRGBA for large radii (thanks for reporting David)
+- fix aaline wrong direction hline bug (thanks Andre)
+- fix off-by-1 error in rotateSurface90Degrees (thanks Austin)
+
 Mon, Feb 20, 2017  9:04:29 PM
 - version rev to 1.0.3
 - updates to VS solution

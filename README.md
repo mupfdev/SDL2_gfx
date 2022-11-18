@@ -38,7 +38,8 @@ Note that SDL2_gfx is compatible with SDL version 2.0 (not SDL 1.2).
 
 ### Unix/Linux
 
-Use the standard autoconf/automake sequence to compile and install the library. 
+Use the standard autoconf/automake sequence to compile and install the
+library.
 
 ```bash
 ./autogen.sh # (optional, recommended)

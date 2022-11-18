@@ -23,13 +23,9 @@ SDL2.
 The current components of the SDL2_gfx library are:
 
 - Graphic Primitives (SDL2_gfxPrimitives.h, SDL2_gfxPrimitives.c)
-
 - Surface Rotozoomer (SDL2_rotozoom.h, SDL2_rotozoom.c)
-
 - Framerate control (SDL2_framerate.h, SDL2_framerate.c)
-
 - MMX image filters (SDL2_imageFilter.h, SDL2_imageFilter.c)
-
 - Build-in 8x8 Font (SDL2_gfxPrimitives_font.h)
 
 Note that SDL2_gfx is compatible with SDL version 2.0 (not SDL 1.2).

@@ -36,29 +36,6 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 #include "SDL2_rotozoom.h"
 #include "SDL2_gfxPrimitives_font.h"
 
-/* ---- Structures */
-
-/*!
-\brief The structure passed to the internal Bresenham iterator.
-*/
-typedef struct {
-	Sint16 x, y;
-	int dx, dy, s1, s2, swapdir, error;
-	Uint32 count;
-} SDL2_gfxBresenhamIterator;
-
-/*!
-\brief The structure passed to the internal Murphy iterator.
-*/
-typedef struct {
-	SDL_Renderer *renderer;
-	int u, v;		/* delta x , delta y */
-	int ku, kt, kv, kd;	/* loop constants */
-	int oct2;
-	int quad4;
-	Sint16 last1x, last1y, last2x, last2y, first1x, first1y, first2x, first2y, tempx, tempy;
-} SDL2_gfxMurphyIterator;
-
 /* ---- Pixel */
 
 /*!

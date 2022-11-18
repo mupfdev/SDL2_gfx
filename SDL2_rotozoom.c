@@ -529,7 +529,7 @@ int _zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
 	/*
 	* Pointer setup 
 	*/
-	sp = csp = (Uint8 *) src->pixels;
+	csp = (Uint8 *) src->pixels;
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
 
@@ -803,7 +803,7 @@ no scanning or interpolation takes place. Input surface must be 8/16/24/32 bit.
 SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns) 
 {
 	int row, col, newWidth, newHeight;
-	int bpp, bpr;
+	int bpp;
 	SDL_Surface* dst;
 	Uint8* srcBuf;
 	Uint8* dstBuf;
@@ -868,6 +868,7 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 			}
 			else
 			{
+				int bpr;
 				/* If the pitch differs, copy each row separately */
 				srcBuf = (Uint8*)(src->pixels);
 				dstBuf = (Uint8*)(dst->pixels);

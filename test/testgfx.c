@@ -61,7 +61,6 @@ static char rr[NUM_RANDOM], rg[NUM_RANDOM], rb[NUM_RANDOM], ra[NUM_RANDOM];
 void InitRandomPoints(int seed)
 {
 	int i;
-	float af;
 
 	/* Initialize random number generator */
 	if (seed < 0) {
@@ -71,6 +70,7 @@ void InitRandomPoints(int seed)
 	}
 
 	for (i=0; i<NUM_RANDOM; i++) {
+		float af;
 		/* Random points in a quadrant */
 		rx[i]=rand() % (WIDTH/2);
 		ry[i]=rand() % (HEIGHT/2);
@@ -156,7 +156,6 @@ void ClearScreen(SDL_Renderer *renderer, const char *title)
 	float stepx;
         float stepy;
         float fx;
-        float fy;
         float fxy;
 	char titletext[TLEN+1];
 	Sint16 textlength;
@@ -170,7 +169,7 @@ void ClearScreen(SDL_Renderer *renderer, const char *title)
 	stepy=1.0f/((HEIGHT-80)/2);
 	fx=0.0;
 	for (x=WIDTH/2; x<WIDTH; x++) {
-		fy=0.0;
+		float fy=0.0;
 		for (y=(HEIGHT-40)/2+60; y<HEIGHT; y++) {
 			fxy=1.0f-fx*fy;
 			pixelRGBA(renderer,x,y,(int)(128.0*fx*fx),(int)(128.0*fxy*fxy),(int)(128.0*fy*fy),255);
@@ -188,19 +187,19 @@ void ClearScreen(SDL_Renderer *renderer, const char *title)
 	SDL_strlcpy(titletext,"Current Primitive: ",TLEN);
 	SDL_strlcat(titletext,title,TLEN);
 	SDL_strlcat(titletext,"  -  Space to continue. ESC to Quit.",TLEN);
-	textlength = (Sint16)strlen(titletext);
+	textlength = (Sint16)SDL_strlen(titletext);
 	stringRGBA (renderer, WIDTH/2-4*textlength,10-4,titletext,255,255,0,255);
 	SDL_strlcpy(titletext,"A=255 on Black",TLEN);
-	textlength = (Sint16)strlen(titletext);
+	textlength = (Sint16)SDL_strlen(titletext);
 	stringRGBA (renderer, WIDTH/4-4*textlength,50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=0-254 on Black",TLEN);
-	textlength = (Sint16)strlen(titletext);
+	textlength = (Sint16)SDL_strlen(titletext);
 	stringRGBA (renderer, 3*WIDTH/4-4*textlength,50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=255, Color Test",TLEN);
-	textlength = (Sint16)strlen(titletext);
+	textlength = (Sint16)SDL_strlen(titletext);
 	stringRGBA (renderer, WIDTH/4-4*textlength,(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
 	SDL_strlcpy(titletext,"A=0-254 on Color",TLEN);
-	textlength = (Sint16)strlen(titletext);
+	textlength = (Sint16)SDL_strlen(titletext);
 	stringRGBA (renderer, 3*WIDTH/4-4*textlength,(HEIGHT-40)/2+50-4,titletext,255,255,255,255);
 }
 
@@ -226,7 +225,7 @@ void ClearCenter(SDL_Renderer *renderer, const char *title)
 		  SDL_RenderDrawPoint(renderer, WIDTH/2 + i, HEIGHT/2 + j);
 	  }
 	}
-	textlength = (Sint16)strlen(title);
+	textlength = (Sint16)SDL_strlen(title);
 	stringRGBA (renderer, WIDTH/2 - 4*textlength,r.y + 2,title,255,255,255,255);
 }
 
@@ -246,7 +245,7 @@ void ExecuteTest(SDL_Renderer *renderer, PrimitivesTestCaseFp testCase, int test
 	char titletext[TLEN+1];
         double fps = ((double) numPrimitives * 1000) / (now - then);
         SDL_snprintf(titletext, TLEN, "Test %2i %20s: %10.1f /sec", testNum, testName, fps);
-		textlength = (Sint16)strlen(titletext);
+		textlength = (Sint16)SDL_strlen(titletext);
 	    stringRGBA (renderer, WIDTH/2-4*textlength,30-4,titletext,255,255,255,255);
 		SDL_Log(titletext);
     }

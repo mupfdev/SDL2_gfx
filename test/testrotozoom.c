@@ -54,7 +54,7 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	int framecount, framemax, frameinc;
-	double angle = 0.0;
+	double angle;
         double zoomf = 1.0;
         double zoomfx = 1.0;
         double zoomfy = 1.0;
@@ -230,8 +230,6 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	int framecount, framemax, frameinc;
-	double zoomxf;
-        double zoomyf;
 	SDL_Renderer *renderer = state->renderers[0];
 	SDL_Event event;
 
@@ -242,9 +240,11 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 	for (framecount=360; framecount<framemax && !done; framecount += frameinc) {
 		while (SDL_PollEvent(&event)) SDLTest_CommonEvent(state, &event, &done);
 		if ((framecount % 360)==0) frameinc++;
+		double zoomxf;
+		double zoomyf;
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
-		double zoomxf=(float)framecount/(float)framemax;
+		zoomxf=(float)framecount/(float)framemax;
 		zoomxf=1.5*zoomxf*zoomxf;
 		zoomyf=0.5+fabs(1.0*sin((double)framecount/80.0));
 		if ((framecount % 120)==0) {
@@ -352,7 +352,6 @@ void RotatePicture90Degrees (SDL_Surface *picture)
 
 void CustomTest(SDL_Surface *picture, double a, double x, double y, int smooth){
 	SDL_Surface *rotozoom_picture;
-	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	SDL_Renderer *renderer = state->renderers[0];
 
@@ -362,6 +361,7 @@ void CustomTest(SDL_Surface *picture, double a, double x, double y, int smooth){
 	SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 	SDL_RenderClear(renderer);
 	if ((rotozoom_picture=rotozoomSurfaceXY (picture, a, x, y, smooth))!=NULL) {
+		SDL_Texture *rotozoom_texture;
 		dest.x = (DEFAULT_WINDOW_WIDTH - rotozoom_picture->w)/2;;
 		dest.y = (DEFAULT_WINDOW_HEIGHT - rotozoom_picture->h)/2;
 		dest.w = rotozoom_picture->w;

@@ -1733,6 +1733,15 @@ int filledCircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Ui
 
 /* ----- AA Ellipse */
 
+/* The Nokia N-Gage does not have lrint, so provide a local inline version */
+#if defined (__NGAGE__)
+static __inline long 
+	lrint(double f) 
+{
+	return SDL_lround(f);
+}
+#endif
+
 /* Windows targets do not have lrint, so provide a local inline version */
 #if defined(_MSC_VER)
 /* Detect 64bit and use intrinsic version */

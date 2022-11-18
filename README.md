@@ -1,4 +1,9 @@
-# SDL2_gfx - Graphics primitives and surface functions for SDL2
+# SDL2_gfx
+
+Graphics primitives and surface functions for SDL2.
+
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b66e7b35ee3a4525b64bada23e7894f7)](https://www.codacy.com/gh/mupfdev/SDL2_gfx/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mupfdev/SDL2_gfx&amp;utm_campaign=Badge_Grade)
+[![CMake](https://github.com/mupfdev/SDL2_gfx/actions/workflows/cmake.yml/badge.svg)](https://github.com/mupfdev/SDL2_gfx/actions/workflows/cmake.yml)
 
 ## Contact and License
 

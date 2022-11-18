@@ -107,7 +107,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 {
 	int x, y, dx, dy, dgap, ra, ga, ba, aa;
 	int n_average;
-	tColorRGBA *sp, *osp, *oosp;
+	tColorRGBA *sp, *oosp;
 	tColorRGBA *dp;
 
 	/*
@@ -127,7 +127,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 
 	for (y = 0; y < dst->h; y++) {
 
-		osp=sp;
+		tColorRGBA *osp=sp;
 		for (x = 0; x < dst->w; x++) {
 
 			/* Trace out source box and accumulate */
@@ -195,7 +195,7 @@ int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int facto
 {
 	int x, y, dx, dy, dgap, a;
 	int n_average;
-	Uint8 *sp, *osp, *oosp;
+	Uint8 *sp, *oosp;
 	Uint8 *dp;
 
 	/*
@@ -215,7 +215,7 @@ int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int facto
 
 	for (y = 0; y < dst->h; y++) {    
 
-		osp=sp;
+		Uint8 *osp=sp;
 		for (x = 0; x < dst->w; x++) {
 
 			/* Trace out source box and accumulate */
@@ -276,10 +276,10 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, int smooth)
 {
-	int x, y, sx, sy, ssx, ssy, *sax, *say, *csax, *csay, *salast, csx, csy, ex, ey, cx, cy, sstep, sstepx, sstepy;
-	tColorRGBA *c00, *c01, *c10, *c11;
+	int x, y, sx, sy, ssx, ssy, *sax, *say, *csax, *csay, *salast, csx, csy, ey, cx, cy, sstep, sstepx, sstepy;
+	tColorRGBA *c01, *c10, *c11;
 	tColorRGBA *sp, *csp, *dp;
-	int spixelgap, spixelw, spixelh, dgap, t1, t2;
+	int spixelgap, spixelw, spixelh, dgap, t2;
 
 	/*
 	* Allocate memory for row/column increments 
@@ -361,7 +361,9 @@ int _zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy,
 				/*
 				* Setup color source pointers 
 				*/
-				ex = (*csax & 0xffff);
+				tColorRGBA *c00;
+				int ex = (*csax & 0xffff);
+				int t1;
 				ey = (*csay & 0xffff);
 				cx = (*csax >> 16);
 				cy = (*csay >> 16);
@@ -512,7 +514,7 @@ int _zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
 	int x, y;
 	Uint32 *sax, *say, *csax, *csay;
 	int csx, csy;
-	Uint8 *sp, *dp, *csp;
+	Uint8 *dp, *csp;
 	int dgap;
 
 	/*
@@ -569,6 +571,7 @@ int _zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
 	*/
 	csay = say;
 	for (y = 0; y < dst->h; y++) {
+		Uint8 *sp;
 		csax = sax;
 		sp = csp;
 		for (x = 0; x < dst->w; x++) {
@@ -628,7 +631,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 void _transformSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int isin, int icos, int flipx, int flipy, int smooth)
 {
-	int x, y, t1, t2, dx, dy, xd, yd, sdx, sdy, ax, ay, ex, ey, sw, sh;
+	int x, y, t2, dx, dy, xd, yd, sdx, sdy, ax, ay, ex, ey, sw, sh;
 	tColorRGBA c00, c01, c10, c11, cswap;
 	tColorRGBA *pc, *sp;
 	int gap;
@@ -659,6 +662,7 @@ void _transformSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int cx, int cy,
 				if (flipx) dx = sw - dx;
 				if (flipy) dy = sh - dy;
 				if ((dx > -1) && (dy > -1) && (dx < (src->w-1)) && (dy < (src->h-1))) {
+					int t1;
 					sp = (tColorRGBA *)src->pixels;;
 					sp += ((src->pitch/4) * dy);
 					sp += dx;
@@ -745,7 +749,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int isin, int icos, int flipx, int flipy)
 {
-	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay;
+	int x, y, dx, xd, yd, sdx, sdy, ax, ay;
 	tColorY *pc, *sp;
 	int gap;
 
@@ -766,7 +770,7 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 	* Iterate through destination surface 
 	*/
 	for (y = 0; y < dst->h; y++) {
-		dy = cy - y;
+		int dy = cy - y;
 		sdx = (ax + (isin * dy)) + xd;
 		sdy = (ay - (icos * dy)) + yd;
 		for (x = 0; x < dst->w; x++) {
@@ -1610,7 +1614,7 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 		* Call the 32bit transformation routine to do the shrinking (using alpha) 
 		*/
 		result = _shrinkSurfaceRGBA(rz_src, rz_dst, factorx, factory);		
-		if ((result!=0) || (rz_dst==NULL)) {
+		if ((result!=0)) {
 			haveError = 1;
 			goto exitShrinkSurface;
 		}

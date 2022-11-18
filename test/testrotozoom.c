@@ -54,7 +54,10 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	int framecount, framemax, frameinc;
-	double angle = 0.0, zoomf = 1.0, zoomfx = 1.0, zoomfy = 1.0;
+	double angle = 0.0;
+        double zoomf = 1.0;
+        double zoomfx = 1.0;
+        double zoomfy = 1.0;
 	SDL_Renderer *renderer = state->renderers[0];
 	SDL_Event event;
 
@@ -227,7 +230,8 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	int framecount, framemax, frameinc;
-	double zoomxf,zoomyf;
+	double zoomxf;
+        double zoomyf;
 	SDL_Renderer *renderer = state->renderers[0];
 	SDL_Event event;
 
@@ -240,7 +244,7 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 		if ((framecount % 360)==0) frameinc++;
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
-		zoomxf=(float)framecount/(float)framemax;
+		double zoomxf=(float)framecount/(float)framemax;
 		zoomxf=1.5*zoomxf*zoomxf;
 		zoomyf=0.5+fabs(1.0*sin((double)framecount/80.0));
 		if ((framecount % 120)==0) {

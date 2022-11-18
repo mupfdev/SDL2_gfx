@@ -153,7 +153,11 @@ void ClearViewport(SDL_Renderer *renderer)
 void ClearScreen(SDL_Renderer *renderer, const char *title)
 {
 	int x,y;
-	float stepx, stepy, fx, fy, fxy;
+	float stepx;
+        float stepy;
+        float fx;
+        float fy;
+        float fxy;
 	char titletext[TLEN+1];
 	Sint16 textlength;
 
@@ -231,7 +235,6 @@ typedef int (*PrimitivesTestCaseFp)(SDL_Renderer *renderer);
 
 void ExecuteTest(SDL_Renderer *renderer, PrimitivesTestCaseFp testCase, int testNum, const char * testName)
 {
-	char titletext[TLEN+1];
     Uint32 then, now, numPrimitives;
 	Sint16 textlength;
 
@@ -240,6 +243,7 @@ void ExecuteTest(SDL_Renderer *renderer, PrimitivesTestCaseFp testCase, int test
 	numPrimitives = testCase(renderer);
 	now = SDL_GetTicks();
     if (now > then) {
+	char titletext[TLEN+1];
         double fps = ((double) numPrimitives * 1000) / (now - then);
         SDL_snprintf(titletext, TLEN, "Test %2i %20s: %10.1f /sec", testNum, testName, fps);
 		textlength = (Sint16)strlen(titletext);

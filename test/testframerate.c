@@ -59,7 +59,6 @@ Uint32 time_passed = 0;
 
 void Draw(SDL_Renderer *renderer, FPSmanager *fpsm)
 {
-	int newRate;
 	int currentRate;
 
 		/* FPSmanager: get current rate */
@@ -69,7 +68,7 @@ void Draw(SDL_Renderer *renderer, FPSmanager *fpsm)
 		timeout--;
 		if (timeout < 0) {
 			/* New rate */
-			newRate = 5 + 5 * (rand() % 10);
+			int newRate = 5 + 5 * (rand() % 10);
 
 			/* Update timeout */
 			timeout = 2 * newRate;
